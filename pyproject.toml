@@ -1,0 +1,58 @@
+[project]
+name = "todo"
+version = "0.1.0"
+description = "A custom todo list app"
+authors = [
+    { name = "AlbertoRFer", email = "17274024+AlbertoRFer@users.noreply.github.com" },
+]
+dependencies = ["pyside6>=6.9.0"]
+requires-python = ">=3.14, <3.15"
+readme = "README.md"
+license = { text = "MIT" }
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
+
+[dependency-groups]
+lint = ["ruff>=0.11.4", "mypy>=1.15.0"]
+test = [
+    "pytest>=8.3.5",
+    "pytest-cov>=6.1.1",
+    "pytest-icdiff>=0.9",
+    "pytest-testdox>=3.1.0",
+    "pytest-cases>=3.8.6",
+]
+
+[tool.ruff]
+include = ["**/*.py", "**/*.pyi", "**/pyproject.toml"]
+
+lint.select = [
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "E",  # pycodestyle - Error
+    "F",  # Pyflakes
+    "I",  # isort
+    "W",  # pycodestyle - Warning
+    "UP", # pyupgrade
+]
+
+lint.ignore = [
+    "E501", # line-too-long
+    "F401", # unused-import
+    #"W191", # tab-indentation
+]
+
+[tool.ruff.pydocstyle]
+convention = "google"
+
+[tool.pytest.ini_options]
+addopts = "--color=yes --testdox"
+testpaths = ["tests"]
+
+[tool.mypy]
+strict = true

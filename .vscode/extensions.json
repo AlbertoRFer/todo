@@ -1,0 +1,20 @@
+{
+  "recommendations": [
+    "charliermarsh.ruff", // Linter
+    "matangover.mypy", // Better mypy checker
+    "ms-python.python", // Python extension
+    "ms-python.vscode-pylance", // Python language server
+    "njpwerner.autodocstring", // Docstring generator
+    "redhat.vscode-yaml", // YAML extension
+    "tamasfe.even-better-toml", // TOML extension
+    "esbenp.prettier-vscode", // Json formatter
+    "vscode-icons-team.vscode-icons", // File and folder icons
+    "codeium.codeium", // AI autocompletion
+    "adam-bender.commit-message-editor", // Commit message editor
+    "gruntfuggly.todo-tree", // Todo tree
+    "seanwu.vscode-qt-for-python", // Qt extension
+    "ms-vscode.makefile-tools", // Makefile extension
+    "mhutchie.git-graph", // Git "railtrack"
+    "mk12.better-git-line-blame" // Inline blame lines
+  ]
+}
