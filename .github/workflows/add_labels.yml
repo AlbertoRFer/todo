@@ -1,0 +1,10 @@
+name: Add labels
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sync:
+    uses: <YOUR_ORG>/.github/.github/workflows/add_labels.yml@main
+    with:
+      target_repo: <YOUR_ORG>/<THIS_REPO>
