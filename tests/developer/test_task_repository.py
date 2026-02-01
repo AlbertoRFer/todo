@@ -1,5 +1,6 @@
 import json
 import pathlib
+import typing
 
 import pytest
 import pytest_cases
@@ -17,7 +18,7 @@ def repo(repo_file_path: pathlib.Path) -> task_repository.TaskRepository:
     return task_repository.TaskRepository(repo_file_path)
 
 
-def create_json_file(file_path: pathlib.Path, tasks: list[str]) -> None:
+def create_json_file(file_path: pathlib.Path, tasks: typing.Any) -> None:
     with open(file_path, "w") as f:
         json.dump(tasks, f)
 
@@ -50,3 +51,29 @@ def test_list_tasks_when_repo_file_does_not_exist(
 
     # Then an empty list is returned
     assert output_tasks == []
+
+
+def create_text_file(file_path: pathlib.Path, text: str) -> None:
+    with open(file_path, "w") as f:
+        f.write(text)
+
+
+@pytest_cases.parametrize(
+    "file_content",
+    ["", "[Task 1"],
+    ids=["empty file", "invalid json"],
+)
+def test_list_tasks_when_invalid_data_in_repo_file(
+    repo: task_repository.TaskRepository,
+    repo_file_path: pathlib.Path,
+    file_content: str,
+) -> None:
+    # Given a repo file with invalid data
+    create_text_file(repo_file_path, file_content)
+
+    # When we list tasks
+    # Then an exeption is raised
+    with pytest.raises(
+        task_repository.RepositoryError, match="Unable to read repository file"
+    ):
+        output_tasks = repo.list_tasks()

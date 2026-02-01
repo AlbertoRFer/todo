@@ -2,6 +2,10 @@ import json
 import pathlib
 
 
+class RepositoryError(Exception):
+    pass
+
+
 class TaskRepository:
     def __init__(self, repo_file_path: pathlib.Path) -> None:
         self.repo_file_path = repo_file_path
@@ -11,6 +15,8 @@ class TaskRepository:
             return self._read_json_file()
         except FileNotFoundError:
             return []
+        except json.JSONDecodeError as err:
+            raise RepositoryError("Unable to read repository file") from err
 
     def _read_json_file(self) -> list[str]:
         with open(self.repo_file_path, encoding="utf-8") as f:
