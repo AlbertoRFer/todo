@@ -1,5 +1,5 @@
 import json
-import pathlib
+import typing
 
 from todo import storage
 
@@ -13,16 +13,18 @@ class TaskRepository:
         self.storage = repo_storage
 
     def list_tasks(self) -> list[str]:
+        data = self._load_data()
+        return self._validate_data(data)
+
+    def _load_data(self) -> typing.Any:
         try:
-            return self._read_json_file()
+            return self.storage.load_data()
         except FileNotFoundError:
             return []
         except json.JSONDecodeError as err:
             raise RepositoryError("Unable to read repository file") from err
 
-    def _read_json_file(self) -> list[str]:
-        data = self.storage.load_data()
-
+    def _validate_data(self, data: typing.Any) -> list[str]:
         if not isinstance(data, list):
             raise RepositoryError("Tasks data must be a list")
 
