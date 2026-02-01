@@ -5,7 +5,7 @@ import typing
 import pytest
 import pytest_cases
 
-from todo import task_repository
+from todo import storage, task_repository
 
 
 @pytest.fixture
@@ -15,7 +15,8 @@ def repo_file_path(tmp_path: pathlib.Path) -> pathlib.Path:
 
 @pytest.fixture
 def repo(repo_file_path: pathlib.Path) -> task_repository.TaskRepository:
-    return task_repository.TaskRepository(repo_file_path)
+    json_storage = storage.JsonStorage(repo_file_path)
+    return task_repository.TaskRepository(json_storage)
 
 
 def create_json_file(file_path: pathlib.Path, tasks: typing.Any) -> None:

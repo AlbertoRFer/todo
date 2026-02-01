@@ -9,8 +9,8 @@ class RepositoryError(Exception):
 
 
 class TaskRepository:
-    def __init__(self, repo_file_path: pathlib.Path) -> None:
-        self.storage = storage.JsonStorage(repo_file_path)
+    def __init__(self, repo_storage: storage.Storage) -> None:
+        self.storage = repo_storage
 
     def list_tasks(self) -> list[str]:
         try:
