@@ -38,3 +38,15 @@ def test_list_tasks_when_repo_file_exists(
 
     # Then the tasks in the repo file are returned
     assert output_tasks == tasks
+
+
+def test_list_tasks_when_repo_file_does_not_exist(
+    repo: task_repository.TaskRepository,
+) -> None:
+    # Given a repo file that does not exist
+
+    # When we list tasks
+    output_tasks = repo.list_tasks()
+
+    # Then an empty list is returned
+    assert output_tasks == []
