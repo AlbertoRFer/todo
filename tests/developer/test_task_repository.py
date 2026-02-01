@@ -2,6 +2,7 @@ import json
 import pathlib
 
 import pytest
+import pytest_cases
 
 from todo import task_repository
 
@@ -21,14 +22,19 @@ def create_json_file(file_path: pathlib.Path, tasks: list[str]) -> None:
         json.dump(tasks, f)
 
 
-def test_list_tasks_when_repo_file_has_no_tasks(
-    repo: task_repository.TaskRepository, repo_file_path: pathlib.Path
+@pytest_cases.parametrize(
+    "tasks",
+    [[], ["Task 1"], ["Task 1", "Task 2", "Task 3"]],
+    ids=["no tasks", "one task", "three tasks"],
+)
+def test_list_tasks_when_repo_file_exists(
+    repo: task_repository.TaskRepository, repo_file_path: pathlib.Path, tasks: list[str]
 ) -> None:
-    # Given a repo file that have no tasks
-    create_json_file(repo_file_path, [])
+    # Given a repo file that exists
+    create_json_file(repo_file_path, tasks)
 
     # When we list tasks
     output_tasks = repo.list_tasks()
 
-    # Then there are no tasks
-    assert output_tasks == []
+    # Then the tasks in the repo file are returned
+    assert output_tasks == tasks
