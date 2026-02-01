@@ -59,21 +59,32 @@ def create_text_file(file_path: pathlib.Path, text: str) -> None:
 
 
 @pytest_cases.parametrize(
-    "file_content",
-    ["", "[Task 1"],
-    ids=["empty file", "invalid json"],
+    "file_content, error_msg",
+    [
+        ("", "Unable to read repository file"),
+        ('["Task 1', "Unable to read repository file"),
+        ("{}", "Tasks data must be a list"),
+        ("[5]", "Task description must be a string"),
+        ('[""]', "Task description must be a non empty string"),
+    ],
+    ids=[
+        "empty file",
+        "invalid json",
+        "wrong data structure",
+        "wrong data decription type",
+        "empty data description",
+    ],
 )
 def test_list_tasks_when_invalid_data_in_repo_file(
     repo: task_repository.TaskRepository,
     repo_file_path: pathlib.Path,
     file_content: str,
+    error_msg: str,
 ) -> None:
     # Given a repo file with invalid data
     create_text_file(repo_file_path, file_content)
 
     # When we list tasks
     # Then an exeption is raised
-    with pytest.raises(
-        task_repository.RepositoryError, match="Unable to read repository file"
-    ):
+    with pytest.raises(task_repository.RepositoryError, match=error_msg):
         output_tasks = repo.list_tasks()

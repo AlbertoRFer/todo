@@ -20,4 +20,16 @@ class TaskRepository:
 
     def _read_json_file(self) -> list[str]:
         with open(self.repo_file_path, encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
+
+        if not isinstance(data, list):
+            raise RepositoryError("Tasks data must be a list")
+
+        for task_description in data:
+            if not isinstance(task_description, str):
+                raise RepositoryError("Task description must be a string")
+
+            if not task_description.strip():
+                raise RepositoryError("Task description must be a non empty string")
+
+        return data
