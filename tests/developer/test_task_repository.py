@@ -5,7 +5,7 @@ import typing
 import pytest
 import pytest_cases
 
-from todo import storage, task_repository
+from todo import exceptions, storage, task_repository
 
 
 @pytest.fixture
@@ -87,5 +87,5 @@ def test_list_tasks_when_invalid_data_in_repo_file(
 
     # When we list tasks
     # Then an exeption is raised
-    with pytest.raises(task_repository.RepositoryError, match=error_msg):
+    with pytest.raises(exceptions.RepositoryError, match=error_msg):
         output_tasks = repo.list_tasks()
