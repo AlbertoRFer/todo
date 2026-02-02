@@ -18,19 +18,28 @@ class TaskRepository:
         except FileNotFoundError:
             return []
         except json.JSONDecodeError as err:
-            raise exceptions.RepositoryError("Unable to read repository file") from err
+            raise exceptions.RepositoryError(
+                exceptions.RepositoryErrorCode.READ_FAILED
+            ) from err
 
     def _validate_data(self, data: typing.Any) -> list[str]:
         if not isinstance(data, list):
-            raise exceptions.RepositoryError("Tasks data must be a list")
+            raise exceptions.RepositoryError(
+                exceptions.RepositoryErrorCode.INVALID_DATA,
+                "Tasks data must be a list",
+            )
 
         for task_description in data:
             if not isinstance(task_description, str):
-                raise exceptions.RepositoryError("Task description must be a string")
+                raise exceptions.RepositoryError(
+                    exceptions.RepositoryErrorCode.INVALID_DATA,
+                    "Task description must be a string",
+                )
 
             if not task_description.strip():
                 raise exceptions.RepositoryError(
-                    "Task description must be a non empty string"
+                    exceptions.RepositoryErrorCode.INVALID_DATA,
+                    "Task description must be a non empty string",
                 )
 
         return data
