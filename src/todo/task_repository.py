@@ -44,3 +44,6 @@ class TaskRepository:
                 )
 
         return data
+
+    def add_todo_list(self, tasks: list[str]) -> None:
+        self.storage.save_data(tasks)

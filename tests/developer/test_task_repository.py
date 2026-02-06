@@ -92,3 +92,20 @@ def test_list_tasks_when_invalid_data_in_repo_file(
 
     # And the correct error code is returned
     assert error_code == exc_info.value.error
+
+
+def test_add_todo_list(
+    repo: task_repository.TaskRepository, repo_file_path: pathlib.Path
+) -> None:
+    # Given an existent repo and a list of tasks
+    create_text_file(repo_file_path, "[]")
+    todo_list = ["Task 1", "Task 2", "Task 3"]
+
+    # When we add a task list
+    repo.add_todo_list(todo_list)
+
+    # Then the task is added to the repo
+    with open(repo_file_path) as f:
+        data = json.load(f)
+
+    assert todo_list == data

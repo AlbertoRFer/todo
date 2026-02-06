@@ -7,6 +7,7 @@ from todo import exceptions
 
 class Storage(typing.Protocol):
     def load_data(self) -> typing.Any: ...
+    def save_data(self, data: list[str]) -> None: ...
 
 
 class JsonStorage:
@@ -28,3 +29,7 @@ class JsonStorage:
     def _json_load(self) -> typing.Any:
         with open(self.file_path, encoding="utf-8") as f:
             return json.load(f)
+
+    def save_data(self, data: list[str]) -> None:
+        with open(self.file_path, "w", encoding="utf-8") as f:
+            json.dump(data, f)
