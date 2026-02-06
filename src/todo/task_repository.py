@@ -15,12 +15,13 @@ class TaskRepository:
     def _load_data(self) -> typing.Any:
         try:
             return self.storage.load_data()
-        except FileNotFoundError:
-            return []
-        except json.JSONDecodeError as err:
-            raise exceptions.RepositoryError(
-                exceptions.RepositoryErrorCode.READ_FAILED
-            ) from err
+        except exceptions.StorageError as err:
+            if err.error == exceptions.StorageErrorCode.STORAGE_NOT_FOUND:
+                return []
+            elif err.error == exceptions.StorageErrorCode.READ_FAILED:
+                raise exceptions.RepositoryError(
+                    exceptions.RepositoryErrorCode.READ_FAILED
+                ) from err
 
     def _validate_data(self, data: typing.Any) -> list[str]:
         if not isinstance(data, list):
