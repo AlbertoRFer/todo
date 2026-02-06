@@ -1,14 +1,27 @@
+import pathlib
+
 import click
+
+from todo import storage, task_repository
 
 
 @click.group()
-def cli() -> None:
-    pass
+@click.pass_context
+def cli(ctx: click.Context) -> None:
+    tasks_file_path = pathlib.Path.cwd() / "tasks.json"
+    json_storage = storage.JsonStorage(tasks_file_path)
+    ctx.obj = task_repository.TaskRepository(json_storage)
 
 
 @cli.command()
-def list_tasks() -> None:
-    click.echo("There are no tasks currently.")
+@click.pass_obj
+def list_tasks(repo: task_repository.TaskRepository) -> None:
+    tasks = repo.list_tasks()
+    if tasks:
+        for n, task in enumerate(tasks, start=1):
+            click.echo(f"{n}.- {task}")
+    else:
+        click.echo("There are no tasks currently.")
 
 
 @cli.command()
