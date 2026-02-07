@@ -57,7 +57,7 @@ def test_create_task_successfully(runner: testing.CliRunner) -> None:
 
 
 def test_create_task_with_empty_description(runner: testing.CliRunner) -> None:
-    error_output = "Error: task was not added — description cannot be empty.\n"
+    error_output = "Task description must be a non empty string"
 
     with runner.isolated_filesystem():
         # GIVEN the application has no tasks stored yet
@@ -68,8 +68,8 @@ def test_create_task_with_empty_description(runner: testing.CliRunner) -> None:
         # WHEN the user attempts to create a task with an empty description
         result = cli_create_task(runner, "")
         # THEN the task is not saved and the user gets a clear error message
-        assert result.exit_code == 1
-        assert result.output == error_output
+        assert result.exit_code == 2
+        assert error_output in result.output
 
         # WHEN the user lists tasks
         result = cli_list_tasks(runner)

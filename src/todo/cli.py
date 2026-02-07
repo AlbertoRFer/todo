@@ -26,8 +26,11 @@ def list_tasks(repo: task_repository.TaskRepository) -> None:
 
 @cli.command()
 @click.pass_obj
-@click.argument("description")
+@click.argument("description", required=True)
 def create_task(repo: task_repository.TaskRepository, description: str) -> None:
+    if not description.strip():
+        raise click.BadArgumentUsage("Task description must be a non empty string")
+
     todo_list = repo.list_tasks()
     todo_list.append(description)
     repo.add_todo_list(todo_list)
