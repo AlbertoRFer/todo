@@ -25,6 +25,10 @@ def list_tasks(repo: task_repository.TaskRepository) -> None:
 
 
 @cli.command()
+@click.pass_obj
 @click.argument("description")
-def create_task(description: str) -> None:
+def create_task(repo: task_repository.TaskRepository, description: str) -> None:
+    todo_list = repo.list_tasks()
+    todo_list.append(description)
+    repo.add_todo_list(todo_list)
     click.echo("Task added successfully.")
