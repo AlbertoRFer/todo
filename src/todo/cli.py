@@ -2,20 +2,19 @@ import pathlib
 
 import click
 
-from todo import storage, task_repository
+from todo import bootstrap, todo_app
 
 
 @click.group()
 @click.pass_context
 def cli(ctx: click.Context) -> None:
-    tasks_file_path = pathlib.Path.cwd() / "tasks.json"
-    json_storage = storage.JsonStorage(tasks_file_path)
-    ctx.obj = task_repository.TaskRepository(json_storage)
+    ctx.obj = bootstrap.create_todo_app()
 
 
 @cli.command()
 @click.pass_obj
-def list_tasks(repo: task_repository.TaskRepository) -> None:
+def list_tasks(app: todo_app.TodoApp) -> None:
+    repo = app.repo
     tasks = repo.list_tasks()
     if tasks:
         for n, task in enumerate(tasks, start=1):
@@ -27,10 +26,11 @@ def list_tasks(repo: task_repository.TaskRepository) -> None:
 @cli.command()
 @click.pass_obj
 @click.argument("description", required=True)
-def create_task(repo: task_repository.TaskRepository, description: str) -> None:
+def create_task(app: todo_app.TodoApp, description: str) -> None:
     if not description.strip():
         raise click.BadArgumentUsage("Task description must be a non empty string")
 
+    repo = app.repo
     todo_list = repo.list_tasks()
     todo_list.append(description)
     repo.add_todo_list(todo_list)
