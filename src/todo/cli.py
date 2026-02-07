@@ -14,8 +14,7 @@ def cli(ctx: click.Context) -> None:
 @cli.command()
 @click.pass_obj
 def list_tasks(app: todo_app.TodoApp) -> None:
-    repo = app.repo
-    tasks = repo.list_tasks()
+    tasks = app.list_tasks()
     if tasks:
         for n, task in enumerate(tasks, start=1):
             click.echo(f"{n}.- {task}")
