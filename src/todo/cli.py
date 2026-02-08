@@ -1,6 +1,6 @@
 import click
 
-from todo import bootstrap, todo_app
+from todo import bootstrap, exceptions, todo_app
 
 
 @click.group()
@@ -24,8 +24,9 @@ def list_tasks(app: todo_app.TodoApp) -> None:
 @click.pass_obj
 @click.argument("description", required=True)
 def create_task(app: todo_app.TodoApp, description: str) -> None:
-    if not description.strip():
-        raise click.BadArgumentUsage("Task description must be a non empty string")
+    try:
+        app.create_task(description)
+    except exceptions.InvalidTaskDescriptionError as err:
+        raise click.BadArgumentUsage(str(err)) from err
 
-    app.create_task(description)
     click.echo("Task added successfully.")
