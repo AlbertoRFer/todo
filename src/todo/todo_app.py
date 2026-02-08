@@ -1,8 +1,8 @@
-from todo import task_repository
+from todo import repository
 
 
 class TodoApp:
-    def __init__(self, repo: task_repository.TaskRepository) -> None:
+    def __init__(self, repo: repository.Repository) -> None:
         self.repo = repo
 
     def list_tasks(self) -> list[str]:

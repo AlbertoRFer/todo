@@ -1,7 +1,11 @@
-import json
 import typing
 
 from todo import exceptions, storage
+
+
+class Repository(typing.Protocol):
+    def list_tasks(self) -> list[str]: ...
+    def add_todo_list(self, tasks: list[str]) -> None: ...
 
 
 class TaskRepository:

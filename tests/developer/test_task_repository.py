@@ -5,7 +5,7 @@ import typing
 import pytest
 import pytest_cases
 
-from todo import exceptions, storage, task_repository
+from todo import exceptions, repository, storage
 
 
 @pytest.fixture
@@ -14,9 +14,9 @@ def repo_file_path(tmp_path: pathlib.Path) -> pathlib.Path:
 
 
 @pytest.fixture
-def repo(repo_file_path: pathlib.Path) -> task_repository.TaskRepository:
+def repo(repo_file_path: pathlib.Path) -> repository.TaskRepository:
     json_storage = storage.JsonStorage(repo_file_path)
-    return task_repository.TaskRepository(json_storage)
+    return repository.TaskRepository(json_storage)
 
 
 def create_json_file(file_path: pathlib.Path, tasks: typing.Any) -> None:
@@ -30,7 +30,7 @@ def create_json_file(file_path: pathlib.Path, tasks: typing.Any) -> None:
     ids=["no tasks", "one task", "three tasks"],
 )
 def test_list_tasks_when_repo_file_exists(
-    repo: task_repository.TaskRepository, repo_file_path: pathlib.Path, tasks: list[str]
+    repo: repository.TaskRepository, repo_file_path: pathlib.Path, tasks: list[str]
 ) -> None:
     # Given a repo file that exists
     create_json_file(repo_file_path, tasks)
@@ -43,7 +43,7 @@ def test_list_tasks_when_repo_file_exists(
 
 
 def test_list_tasks_when_repo_file_does_not_exist(
-    repo: task_repository.TaskRepository,
+    repo: repository.TaskRepository,
 ) -> None:
     # Given a repo file that does not exist
 
@@ -77,7 +77,7 @@ def create_text_file(file_path: pathlib.Path, text: str) -> None:
     ],
 )
 def test_list_tasks_when_invalid_data_in_repo_file(
-    repo: task_repository.TaskRepository,
+    repo: repository.TaskRepository,
     repo_file_path: pathlib.Path,
     file_content: str,
     error_code: exceptions.RepositoryErrorCode,
@@ -95,7 +95,7 @@ def test_list_tasks_when_invalid_data_in_repo_file(
 
 
 def test_add_todo_list(
-    repo: task_repository.TaskRepository, repo_file_path: pathlib.Path
+    repo: repository.TaskRepository, repo_file_path: pathlib.Path
 ) -> None:
     # Given an existent repo and a list of tasks
     create_text_file(repo_file_path, "[]")
