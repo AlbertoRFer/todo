@@ -1,5 +1,3 @@
-import pathlib
-
 import click
 
 from todo import bootstrap, todo_app
