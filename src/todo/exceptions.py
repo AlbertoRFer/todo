@@ -40,3 +40,7 @@ class StorageErrorCode(BaseErrorCode):
 @dataclasses.dataclass
 class StorageError(BaseError):
     pass
+
+
+class InvalidTaskDescriptionError(Exception):
+    pass
