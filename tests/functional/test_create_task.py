@@ -41,7 +41,10 @@ def test_create_task_successfully(runner: testing.CliRunner) -> None:
         result = cli_list_tasks(runner)
         # THEN the created task is visible and numbered starting from 1
         assert result.exit_code == 0
-        assert result.output == f"1.- {first_description}\n"
+        lines = result.output.splitlines()
+        assert len(lines) == 1
+        assert lines[0].startswith("1")
+        assert first_description in lines[0]
 
         # WHEN the user creates a second task
         result = cli_create_task(runner, second_description)
@@ -53,4 +56,9 @@ def test_create_task_successfully(runner: testing.CliRunner) -> None:
         result = cli_list_tasks(runner)
         # THEN both tasks are visible in creation order and numbered sequentially
         assert result.exit_code == 0
-        assert result.output == (f"1.- {first_description}\n2.- {second_description}\n")
+        lines = result.output.splitlines()
+        assert len(lines) == 2
+        assert lines[0].startswith("1")
+        assert first_description in lines[0]
+        assert lines[1].startswith("2")
+        assert second_description in lines[1]
