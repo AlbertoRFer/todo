@@ -1,6 +1,6 @@
 import click
 
-from todo import bootstrap, exceptions, todo_app
+from todo import bootstrap, exceptions, todo_app, todo_list
 
 
 @click.group()
@@ -12,10 +12,11 @@ def cli(ctx: click.Context) -> None:
 @cli.command()
 @click.pass_obj
 def list_tasks(app: todo_app.TodoApp) -> None:
-    tasks = app.list_tasks()
-    if tasks:
-        for n, task in enumerate(tasks, start=1):
-            click.echo(f"{n}.- {task}")
+    todo: todo_list.TodoList = app.list_tasks()
+
+    if todo.tasks:
+        for n, task in enumerate(todo.tasks, start=1):
+            click.echo(f"{n}.- {task.description}")
     else:
         click.echo("There are no tasks currently.")
 
