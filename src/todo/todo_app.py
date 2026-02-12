@@ -1,4 +1,4 @@
-from todo import exceptions, repository, todo_list
+from todo import exceptions, repository, task, todo_list
 
 
 class TodoApp:
@@ -9,15 +9,9 @@ class TodoApp:
         return self.repo.get_todo_list()
 
     def create_task(self, description: str) -> None:
-        self._validate_task_description(description)
+        new_task = task.Task(description)
 
-        todo_list = self.repo.list_tasks()
-        todo_list.append(description)
+        todo_list = self.repo.get_todo_list()
+        todo_list.add_task(new_task)
 
         self.repo.add_todo_list(todo_list)
-
-    def _validate_task_description(self, description: str) -> None:
-        if not description.strip():
-            raise exceptions.InvalidTaskDescriptionError(
-                "Task description must be a non empty string"
-            )
