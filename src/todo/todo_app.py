@@ -1,4 +1,4 @@
-from todo import exceptions, repository, task, todo_list
+from todo import repository, task, todo_list
 
 
 class TodoApp:
