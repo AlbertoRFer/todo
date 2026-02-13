@@ -17,7 +17,9 @@ def list_tasks(app: todo_app.TodoApp) -> None:
 
     if todo.tasks:
         for n, task in enumerate(todo.tasks, start=1):
-            click.echo(f"{n}.- {task.description}")
+            status = "[ ]"
+            click.echo(f"{n}.- {status} {task.description}")
+
     else:
         click.echo("There are no tasks currently.")
 
