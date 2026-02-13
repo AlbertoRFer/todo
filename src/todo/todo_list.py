@@ -13,7 +13,7 @@ class TodoList:
 
     def add_task(self, new_task: task.Task) -> None:
         if new_task.description in self._task_descriptions:
-            msg = f"Task with description '{new_task.description}' already exists."
+            msg = f"Duplicate task description: '{new_task.description}'"
             raise exceptions.DuplicateTaskDescriptionError(msg)
 
         self._task_descriptions.add(new_task.description)
