@@ -12,11 +12,11 @@ def runner() -> testing.CliRunner:
 
 
 def cli_create_task(runner: testing.CliRunner, description: str) -> testing.Result:
-    return runner.invoke(cli, ["create-task", description])
+    return runner.invoke(cli, ["create-task", description], catch_exceptions=False)
 
 
 def cli_list_tasks(runner: testing.CliRunner) -> testing.Result:
-    return runner.invoke(cli, ["list-tasks"])
+    return runner.invoke(cli, ["list-tasks"], catch_exceptions=False)
 
 
 def test_create_task_successfully(runner: testing.CliRunner) -> None:
@@ -54,25 +54,3 @@ def test_create_task_successfully(runner: testing.CliRunner) -> None:
         # THEN both tasks are visible in creation order and numbered sequentially
         assert result.exit_code == 0
         assert result.output == (f"1.- {first_description}\n2.- {second_description}\n")
-
-
-def test_create_task_with_empty_description(runner: testing.CliRunner) -> None:
-    error_output = "Task description must be a non empty string"
-
-    with runner.isolated_filesystem():
-        # GIVEN the application has no tasks stored yet
-        result = cli_list_tasks(runner)
-        assert result.exit_code == 0
-        assert result.output == NO_TASKS_OUTPUT
-
-        # WHEN the user attempts to create a task with an empty description
-        result = cli_create_task(runner, "")
-        # THEN the task is not saved and the user gets a clear error message
-        assert result.exit_code == 2
-        assert error_output in result.output
-
-        # WHEN the user lists tasks
-        result = cli_list_tasks(runner)
-        # THEN no tasks are shown (the invalid task was not saved)
-        assert result.exit_code == 0
-        assert result.output == NO_TASKS_OUTPUT

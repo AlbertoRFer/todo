@@ -1,53 +1,41 @@
+import json
+import pathlib
 import typing
 
-from todo import exceptions, storage
+import cattrs
+
+from todo import todo_list
 
 
 class Repository(typing.Protocol):
-    def list_tasks(self) -> list[str]: ...
-    def add_todo_list(self, tasks: list[str]) -> None: ...
+    def get_todo_list(self) -> todo_list.TodoList: ...
+    def add_todo_list(self, todo: todo_list.TodoList) -> None: ...
+    def initialize(self) -> None: ...
 
 
-class TaskRepository:
-    def __init__(self, repo_storage: storage.Storage) -> None:
-        self.storage = repo_storage
+EMPTY_TODO_LIST_SCHEMA: dict[str, typing.Any] = {"tasks": []}
 
-    def list_tasks(self) -> list[str]:
-        data = self._load_data()
-        return self._validate_data(data)
 
-    def _load_data(self) -> typing.Any:
-        try:
-            return self.storage.load_data()
-        except exceptions.StorageError as err:
-            if err.error == exceptions.StorageErrorCode.STORAGE_NOT_FOUND:
-                return []
-            elif err.error == exceptions.StorageErrorCode.READ_FAILED:
-                raise exceptions.RepositoryError(
-                    exceptions.RepositoryErrorCode.READ_FAILED
-                ) from err
+class TodoListJsonRepository:
+    def __init__(self, file_path: pathlib.Path) -> None:
+        self._file_path = file_path
 
-    def _validate_data(self, data: typing.Any) -> list[str]:
-        if not isinstance(data, list):
-            raise exceptions.RepositoryError(
-                exceptions.RepositoryErrorCode.INVALID_DATA,
-                "Tasks data must be a list",
-            )
+    def initialize(self) -> None:
+        if not self._file_path.exists():
+            self._save_json_data(EMPTY_TODO_LIST_SCHEMA)
 
-        for task_description in data:
-            if not isinstance(task_description, str):
-                raise exceptions.RepositoryError(
-                    exceptions.RepositoryErrorCode.INVALID_DATA,
-                    "Task description must be a string",
-                )
+    def get_todo_list(self) -> todo_list.TodoList:
+        data = self._load_json_data()
+        return cattrs.structure(data, todo_list.TodoList)
 
-            if not task_description.strip():
-                raise exceptions.RepositoryError(
-                    exceptions.RepositoryErrorCode.INVALID_DATA,
-                    "Task description must be a non empty string",
-                )
+    def _load_json_data(self) -> typing.Any:
+        with open(self._file_path, encoding="utf-8") as f:
+            return json.load(f)
 
-        return data
+    def add_todo_list(self, todo: todo_list.TodoList) -> None:
+        data_to_save = cattrs.unstructure(todo)
+        self._save_json_data(data_to_save)
 
-    def add_todo_list(self, tasks: list[str]) -> None:
-        self.storage.save_data(tasks)
+    def _save_json_data(self, data: typing.Any) -> None:
+        with open(self._file_path, "w", encoding="utf-8") as f:
+            json.dump(data, f)
