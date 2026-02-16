@@ -23,6 +23,10 @@ class TodoList:
         self._task_descriptions.add(new_task.description)
         self.tasks.append(new_task)
 
+    def update_task_status(self, task_id: uuid.UUID, is_done: bool) -> None:
+        task_to_update = self._tasks_uuid_map[task_id]
+        task_to_update.is_done = is_done
+
     def get_task(self, task_id: uuid.UUID) -> task.Task:
         try:
             return self._tasks_uuid_map[task_id]

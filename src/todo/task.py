@@ -9,6 +9,7 @@ from todo import exceptions
 @attrs.define
 class Task:
     description: str = attrs.field()
+    is_done: bool = attrs.field(default=False)
     _id: uuid.UUID = attrs.field(factory=uuid.uuid4)
 
     @description.validator
