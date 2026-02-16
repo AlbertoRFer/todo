@@ -8,3 +8,7 @@ class DuplicateTaskDescriptionError(DomainError):
 
 class InvalidTaskDescriptionError(DomainError):
     pass
+
+
+class TaskNotFoundError(DomainError):
+    pass

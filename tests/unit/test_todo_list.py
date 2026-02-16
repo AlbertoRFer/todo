@@ -1,3 +1,5 @@
+import uuid
+
 import pytest
 
 from todo import exceptions, task, todo_list
@@ -26,3 +28,29 @@ def test_todo_list_raises_exception_when_adding_duplicate_tasks() -> None:
     # Then an exception is raised
     with pytest.raises(exceptions.DuplicateTaskDescriptionError):
         todo.add_task(task.Task("Task 2"))
+
+
+def test_todo_list_can_get_task_from_id() -> None:
+    # Given a todo list with tasks
+    tasks = [task.Task(f"Task {n}") for n in range(1, 4)]
+    todo = todo_list.TodoList(tasks)
+    lookup_id = tasks[2].id
+
+    # When we get a task
+    output_task = todo.get_task(lookup_id)
+
+    # Then the task is returned
+    assert tasks[2] == output_task
+
+
+def test_todo_list_throws_exception_when_task_does_not_exist() -> None:
+    # Given a todo list with tasks
+    tasks = [task.Task(f"Task {n}") for n in range(1, 4)]
+    todo = todo_list.TodoList(tasks)
+    random_lookup_id = uuid.uuid4()
+
+    # When we try to get a Task using a random lookup id
+    # Then an exception is raised
+    with pytest.raises(exceptions.TaskNotFoundError):
+        todo.get_task(random_lookup_id)
+
