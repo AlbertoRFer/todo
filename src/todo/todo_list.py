@@ -1,3 +1,5 @@
+import uuid
+
 import attrs
 
 from todo import exceptions, task
@@ -7,9 +9,11 @@ from todo import exceptions, task
 class TodoList:
     tasks: list[task.Task]
     _task_descriptions: set[str] = attrs.field(init=False)
+    _tasks_uuid_map: dict[uuid.UUID, task.Task] = attrs.field(init=False)
 
     def __attrs_post_init__(self) -> None:
         self._task_descriptions = {t.description for t in self.tasks}
+        self._tasks_uuid_map = {t.id: t for t in self.tasks}
 
     def add_task(self, new_task: task.Task) -> None:
         if new_task.description in self._task_descriptions:
@@ -18,3 +22,14 @@ class TodoList:
 
         self._task_descriptions.add(new_task.description)
         self.tasks.append(new_task)
+
+    def update_task_status(self, task_id: uuid.UUID, is_done: bool) -> None:
+        task_to_update = self._tasks_uuid_map[task_id]
+        task_to_update.is_done = is_done
+
+    def get_task(self, task_id: uuid.UUID) -> task.Task:
+        try:
+            return self._tasks_uuid_map[task_id]
+        except KeyError as err:
+            msg = f"Task not found: missing id '{task_id}'"
+            raise exceptions.TaskNotFoundError(msg) from err

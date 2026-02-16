@@ -1,3 +1,5 @@
+import uuid
+
 from todo import repository, task, todo_list
 
 
@@ -13,5 +15,11 @@ class TodoApp:
 
         todo_list = self.repo.get_todo_list()
         todo_list.add_task(new_task)
+
+        self.repo.add_todo_list(todo_list)
+
+    def update_task_status(self, task_id: uuid.UUID, is_done: bool) -> None:
+        todo_list = self.repo.get_todo_list()
+        todo_list.update_task_status(task_id, is_done)
 
         self.repo.add_todo_list(todo_list)

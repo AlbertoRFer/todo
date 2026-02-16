@@ -1,6 +1,7 @@
 import json
 import pathlib
 import typing
+import uuid
 
 import cattrs
 
@@ -12,6 +13,10 @@ class Repository(typing.Protocol):
     def add_todo_list(self, todo: todo_list.TodoList) -> None: ...
     def initialize(self) -> None: ...
 
+
+converter = cattrs.Converter()
+converter.register_structure_hook(uuid.UUID, lambda v, _: uuid.UUID(v))
+converter.register_unstructure_hook(uuid.UUID, lambda v: str(v))
 
 EMPTY_TODO_LIST_SCHEMA: dict[str, typing.Any] = {"tasks": []}
 
@@ -26,14 +31,14 @@ class TodoListJsonRepository:
 
     def get_todo_list(self) -> todo_list.TodoList:
         data = self._load_json_data()
-        return cattrs.structure(data, todo_list.TodoList)
+        return converter.structure(data, todo_list.TodoList)
 
     def _load_json_data(self) -> typing.Any:
         with open(self._file_path, encoding="utf-8") as f:
             return json.load(f)
 
     def add_todo_list(self, todo: todo_list.TodoList) -> None:
-        data_to_save = cattrs.unstructure(todo)
+        data_to_save = converter.unstructure(todo)
         self._save_json_data(data_to_save)
 
     def _save_json_data(self, data: typing.Any) -> None:

@@ -1,7 +1,9 @@
 import json
 import pathlib
 import typing
+import uuid
 
+import attrs
 import pytest
 
 from todo import repository, task, todo_list
@@ -41,22 +43,24 @@ def test_repository_can_save_a_todo_list(
     data = read_json_file(repo_file_path)
     for expected_task, actual_task in zip(tasks, data["tasks"], strict=True):
         assert expected_task.description == actual_task["description"]
+        assert expected_task.id == uuid.UUID(actual_task["_id"])
 
 
 def test_repository_can_retrieve_a_todo_list(
     repo: repository.TodoListJsonRepository, repo_file_path: pathlib.Path
 ) -> None:
     # Given a file containing a todo list
-    task_descriptions = [f"Task {n}" for n in range(1, 4)]
-    data = {"tasks": [{"description": desc} for desc in task_descriptions]}
+    tasks = [task.Task(f"Task {n}") for n in range(1, 4)]
+    expected_todo = todo_list.TodoList(tasks)
+
+    data = {"tasks": [{**attrs.asdict(t), "_id": str(t.id)} for t in tasks]}
     write_json_file(repo_file_path, data)
 
     # When we retrieve the todo list
-    todo = repo.get_todo_list()
+    output_todo = repo.get_todo_list()
 
     # Then the todo list is returned
-    tasks = [task.Task(desc) for desc in task_descriptions]
-    assert todo_list.TodoList(tasks) == todo
+    assert attrs.asdict(expected_todo) == attrs.asdict(output_todo)
 
 
 def test_initialize_creates_file_if_missing(
